@@ -1,48 +1,48 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserService } from './user.service';
 
-// @Get('all')      Get /user/all
+// @Get()           Get /user
 // @Get(':id')      Get /user/:id
 // @Post()          Post /user
-// @Put(':id)       PUT /user/:id
-// @Delete(':id)    Delete /user/:id
+// @Put(':id')      PUT /user/:id
+// @Delete(':id')   Delete /user/:id
 
 @Controller('user')
 export class UserController {
-  // get user
+  constructor(private readonly userService: UserService) {}
+
+  // Get all users with optional name filter
   @Get()
-  getUsers(@Query('name') name: string) {
-    const users = [
-      { id: 1, name: 'waqas' },
-      { id: 2, name: 'usman' },
-    ];
-
-    if (name) {
-      return users.filter((user) =>
-        user.name.toLowerCase().includes(name.toLowerCase()),
-      );
-    }
+  getUsers(@Query('name') name: string):unknown {
+    return this.userService.findAllUsers(name);
   }
 
+  // Get user by ID
   @Get(':id')
-  getUserById(@Param('id') id: string) {
-    return { id, name: 'waqas' };
+  getUserById(@Param('id', ParseIntPipe) id: number):unknown {
+    return this.userService.findUserById(id);
   }
 
+  // Create new user
   @Post()
-  createUser(@Body() createUserDto: CreateUserDto) {
-    return {
-      data: createUserDto,
-      message: 'user created successfully',
-    };
+  createUser(@Body() createUserDto: CreateUserDto):unknown {
+    return this.userService.createUser(createUserDto);
   }
 
-   @Put()
-  updateUser(@Param('id') id:string , @Body() updateUserDto: UpdateUserDto) {
-    return {
-      data: {id, ...updateUserDto},
-      message: 'user created successfully',
-    };
+  // Update user by ID
+  @Put(':id')
+  updateUser(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ):unknown {
+    return this.userService.updateUser(id, updateUserDto);
+  }
+
+  // Delete user by ID
+  @Delete(':id')
+  deleteUser(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.deleteUser(id);
   }
 }

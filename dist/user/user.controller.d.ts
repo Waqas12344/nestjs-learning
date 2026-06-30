@@ -1,13 +1,14 @@
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserService } from './user.service';
 export declare class UserController {
-    getUsers(name: string): {
-        id: number;
-        name: string;
-    }[] | undefined;
-    getUserById(id: string): {
-        id: string;
-        name: string;
-    };
-    createUser(body: any): {
+    private readonly userService;
+    constructor(userService: UserService);
+    getUsers(name: string): unknown;
+    getUserById(id: number): unknown;
+    createUser(createUserDto: CreateUserDto): unknown;
+    updateUser(id: number, updateUserDto: UpdateUserDto): unknown;
+    deleteUser(id: number): {
         message: string;
     };
 }
